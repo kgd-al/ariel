@@ -11,7 +11,7 @@ import numpy as np
 import quaternion as qnp
 
 # Local libraries
-from ariel.body_phenotypes.robogen_lite.config import ModuleFaces, ModuleType
+from ariel.body_phenotypes.robogen_lite.config import ModuleFaces, ModuleType, printable
 from ariel.body_phenotypes.robogen_lite.modules.module import Module
 from ariel.parameters.ariel_modules import ArielModulesConfig
 
@@ -115,48 +115,50 @@ class BrickModule(Module):
                 decimals=3,
             ),
         )
-        self.sites[ModuleFaces.TOP] = brick.add_site(
-            name=f"{brick_name}-top",
-            pos=[
-                0,
-                ariel_modules_config.BRICK_DIMENSIONS[1],
-                ariel_modules_config.BRICK_DIMENSIONS[2],
-            ],
-            quat=np.round(
-                np.roll(
-                    qnp.as_float_array(
-                        qnp.from_euler_angles([
-                            np.deg2rad(0),
-                            np.deg2rad(180),
-                            np.deg2rad(90),
-                        ]),
+
+        if not printable:
+            self.sites[ModuleFaces.TOP] = brick.add_site(
+                name=f"{brick_name}-top",
+                pos=[
+                    0,
+                    ariel_modules_config.BRICK_DIMENSIONS[1],
+                    ariel_modules_config.BRICK_DIMENSIONS[2],
+                ],
+                quat=np.round(
+                    np.roll(
+                        qnp.as_float_array(
+                            qnp.from_euler_angles([
+                                np.deg2rad(0),
+                                np.deg2rad(180),
+                                np.deg2rad(90),
+                            ]),
+                        ),
+                        shift=shift,
                     ),
-                    shift=shift,
+                    decimals=3,
                 ),
-                decimals=3,
-            ),
-        )
-        self.sites[ModuleFaces.BOTTOM] = brick.add_site(
-            name=f"{brick_name}-bottom",
-            pos=[
-                0,
-                ariel_modules_config.BRICK_DIMENSIONS[1],
-                -ariel_modules_config.BRICK_DIMENSIONS[2],
-            ],
-            quat=np.round(
-                np.roll(
-                    qnp.as_float_array(
-                        qnp.from_euler_angles([
-                            np.deg2rad(0),
-                            np.deg2rad(0),
-                            -np.deg2rad(90),
-                        ]),
+            )
+            self.sites[ModuleFaces.BOTTOM] = brick.add_site(
+                name=f"{brick_name}-bottom",
+                pos=[
+                    0,
+                    ariel_modules_config.BRICK_DIMENSIONS[1],
+                    -ariel_modules_config.BRICK_DIMENSIONS[2],
+                ],
+                quat=np.round(
+                    np.roll(
+                        qnp.as_float_array(
+                            qnp.from_euler_angles([
+                                np.deg2rad(0),
+                                np.deg2rad(0),
+                                -np.deg2rad(90),
+                            ]),
+                        ),
+                        shift=shift,
                     ),
-                    shift=shift,
+                    decimals=3,
                 ),
-                decimals=3,
-            ),
-        )
+            )
 
         # Save model specifications
         self.spec = spec
