@@ -10,6 +10,7 @@ from ariel.body_phenotypes.robogen_lite.config import (
     IDX_OF_CORE,
     ModuleFaces,
     ModuleType,
+    printable,
 )
 from ariel.body_phenotypes.robogen_lite.modules.module import Module
 
@@ -150,40 +151,42 @@ class CoreModule(Module):
                 decimals=3,
             ),
         )
-        self.sites[ModuleFaces.TOP] = core.add_site(
-            name=f"{core_name}-top",
-            pos=[0, CORE_DIMENSIONS[1], CORE_DIMENSIONS[2]],
-            quat=np.round(
-                np.roll(
-                    qnp.as_float_array(
-                        qnp.from_euler_angles([
-                            np.deg2rad(0),
-                            np.deg2rad(180),
-                            np.deg2rad(90),
-                        ]),
+
+        if not printable:
+            self.sites[ModuleFaces.TOP] = core.add_site(
+                name=f"{core_name}-top",
+                pos=[0, CORE_DIMENSIONS[1], CORE_DIMENSIONS[2]],
+                quat=np.round(
+                    np.roll(
+                        qnp.as_float_array(
+                            qnp.from_euler_angles([
+                                np.deg2rad(0),
+                                np.deg2rad(180),
+                                np.deg2rad(90),
+                            ]),
+                        ),
+                        shift=shift,
                     ),
-                    shift=shift,
+                    decimals=3,
                 ),
-                decimals=3,
-            ),
-        )
-        self.sites[ModuleFaces.BOTTOM] = core.add_site(
-            name=f"{core_name}-bottom",
-            pos=[0, CORE_DIMENSIONS[1], -CORE_DIMENSIONS[2]],
-            quat=np.round(
-                np.roll(
-                    qnp.as_float_array(
-                        qnp.from_euler_angles([
-                            np.deg2rad(0),
-                            np.deg2rad(0),
-                            -np.deg2rad(90),
-                        ]),
+            )
+            self.sites[ModuleFaces.BOTTOM] = core.add_site(
+                name=f"{core_name}-bottom",
+                pos=[0, CORE_DIMENSIONS[1], -CORE_DIMENSIONS[2]],
+                quat=np.round(
+                    np.roll(
+                        qnp.as_float_array(
+                            qnp.from_euler_angles([
+                                np.deg2rad(0),
+                                np.deg2rad(0),
+                                -np.deg2rad(90),
+                            ]),
+                        ),
+                        shift=shift,
                     ),
-                    shift=shift,
+                    decimals=3,
                 ),
-                decimals=3,
-            ),
-        )
+            )
 
         # Save model specifications
         self.spec = spec

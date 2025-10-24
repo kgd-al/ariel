@@ -26,9 +26,10 @@ def single_frame_renderer(
     steps: int = 1,
     width: int = 480,
     height: int = 640,
+    camera: str = "ortho-cam",
     cam_fovy: float | None = None,
-    cam_pos: tuple[float] | None = None,
-    cam_quat: tuple[float] | None = None,
+    cam_pos: tuple[float, float, float] | None = None,
+    cam_quat: tuple[float, float, float, float] | None = None,
     *,
     show: bool = False,
     save: bool = False,
@@ -48,12 +49,12 @@ def single_frame_renderer(
     camera = mujoco.mj_name2id(
         model,
         mujoco.mjtObj.mjOBJ_CAMERA,
-        "ortho-cam",
+        camera,
     )
 
     # If camera not found, use default camera
     if camera == -1:
-        msg = "Camera 'ortho-cam' not found. Using default camera."
+        msg = f"Camera '{camera}' not found. Using default camera."
         log.debug(msg)
         camera = None
     else:
@@ -61,6 +62,9 @@ def single_frame_renderer(
         model.cam_pos[camera] = cam_pos or model.cam_pos[camera]
         model.cam_quat[camera] = cam_quat or model.cam_quat[camera]
         model.cam_sensorsize[camera] = [width, height]
+        print(f"{model.cam_pos0=}")
+        print(f"{model.cam_pos=}")
+        print(model.camera(camera))
 
     # Call rendering engine
     with mujoco.Renderer(
@@ -69,7 +73,7 @@ def single_frame_renderer(
         height=height,
     ) as renderer:
         # Move simulation forward one iteration/step
-        mujoco.mj_step(model, data, nstep=steps)
+        mujoco.mj_forward(model, data)
 
         # Update the renderer's camera
         renderer.update_scene(
@@ -85,13 +89,13 @@ def single_frame_renderer(
         img: Image.Image = Image.fromarray(frame)
 
     # Save image locally
-    if save is True:
+    if save:
         if save_path is None:
             save_path = generate_save_path(file_path="img.png")
         img.save(save_path, format="png")
 
     # Show image
-    if show is True:
+    if show:
         img.show()
 
     # Return image

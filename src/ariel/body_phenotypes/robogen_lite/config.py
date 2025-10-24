@@ -7,14 +7,20 @@ Notes
 Todo
 ----
     [ ] Extend ALLOWED_FACES to include TOP and BOTTOM faces.
-
+6
 """
-
+import os
 # Standard library
 from enum import Enum
 
 # Third-party libraries
 from pydantic import BaseModel
+
+
+printable = bool(os.environ.get("PRINTABLE", True))
+
+if printable:
+    print(f"[kgd-debug:{__name__}] Making changes")
 
 
 class ModuleType(Enum):
@@ -33,34 +39,44 @@ class ModuleFaces(Enum):
     BACK = 1
     RIGHT = 2
     LEFT = 3
-    TOP = 4
-    BOTTOM = 5
+
+    if not printable:
+        TOP = 4
+        BOTTOM = 5
 
 
 class ModuleRotationsIdx(Enum):
     """Enum for module rotations as indices."""
 
-    DEG_0 = 0
-    DEG_45 = 1
-    DEG_90 = 2
-    DEG_135 = 3
-    DEG_180 = 4
-    DEG_225 = 5
-    DEG_270 = 6
-    DEG_315 = 7
+    if printable:
+        DEG_0 = 0
+        DEG_90 = 1
+        DEG_180 = 2
+        DEG_270 = 3
+    else:
+        DEG_0 = 0
+        DEG_45 = 1
+        DEG_90 = 2
+        DEG_135 = 3
+        DEG_180 = 4
+        DEG_225 = 5
+        DEG_270 = 6
+        DEG_315 = 7
 
 
 class ModuleRotationsTheta(Enum):
     """Enum for module rotations in degrees."""
 
     DEG_0 = 0
-    DEG_45 = 45
     DEG_90 = 90
-    DEG_135 = 135
     DEG_180 = 180
-    DEG_225 = 225
     DEG_270 = 270
-    DEG_315 = 315
+
+    if not printable:
+        DEG_45 = 45
+        DEG_135 = 135
+        DEG_225 = 225
+        DEG_315 = 315
 
 
 class ModuleInstance(BaseModel):
@@ -85,45 +101,56 @@ ALLOWED_FACES: dict[ModuleType, list[ModuleFaces]] = {
         ModuleFaces.BACK,
         ModuleFaces.RIGHT,
         ModuleFaces.LEFT,
-        ModuleFaces.TOP,
-        ModuleFaces.BOTTOM,
+        # ModuleFaces.TOP,
+        # ModuleFaces.BOTTOM,
     ],
     ModuleType.BRICK: [
         ModuleFaces.FRONT,
         ModuleFaces.RIGHT,
         ModuleFaces.LEFT,
-        ModuleFaces.TOP,
-        ModuleFaces.BOTTOM,
+        # ModuleFaces.TOP,
+        # ModuleFaces.BOTTOM,
     ],
     ModuleType.HINGE: [ModuleFaces.FRONT],
     ModuleType.NONE: [],
 }
+
+if not printable:
+    for module in [ModuleType.CORE, ModuleType.BRICK]:
+        ALLOWED_FACES[module].extend([ModuleFaces.TOP, ModuleFaces.BOTTOM])
 
 # Define allowed rotations for each module type
 ALLOWED_ROTATIONS: dict[ModuleType, list[ModuleRotationsIdx]] = {
     ModuleType.CORE: [ModuleRotationsIdx.DEG_0],
     ModuleType.BRICK: [
         ModuleRotationsIdx.DEG_0,
-        ModuleRotationsIdx.DEG_45,
+        # ModuleRotationsIdx.DEG_45,
         ModuleRotationsIdx.DEG_90,
-        ModuleRotationsIdx.DEG_135,
+        # ModuleRotationsIdx.DEG_135,
         ModuleRotationsIdx.DEG_180,
-        ModuleRotationsIdx.DEG_225,
+        # ModuleRotationsIdx.DEG_225,
         ModuleRotationsIdx.DEG_270,
-        ModuleRotationsIdx.DEG_315,
+        # ModuleRotationsIdx.DEG_315,
     ],
     ModuleType.HINGE: [
         ModuleRotationsIdx.DEG_0,
-        ModuleRotationsIdx.DEG_45,
+        # ModuleRotationsIdx.DEG_45,
         ModuleRotationsIdx.DEG_90,
-        ModuleRotationsIdx.DEG_135,
+        # ModuleRotationsIdx.DEG_135,
         ModuleRotationsIdx.DEG_180,
-        ModuleRotationsIdx.DEG_225,
+        # ModuleRotationsIdx.DEG_225,
         ModuleRotationsIdx.DEG_270,
-        ModuleRotationsIdx.DEG_315,
+        # ModuleRotationsIdx.DEG_315,
     ],
     ModuleType.NONE: [ModuleRotationsIdx.DEG_0],
 }
+
+if not printable:
+    for module in [ModuleType.BRICK, ModuleType.HINGE]:
+        ALLOWED_ROTATIONS[module].extend([
+            ModuleRotationsIdx.DEG_45, ModuleRotationsIdx.DEG_135, ModuleRotationsIdx.DEG_225, ModuleRotationsIdx.DEG_315,
+        ])
+
 
 # Global constants
 IDX_OF_CORE = 0
