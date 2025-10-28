@@ -52,9 +52,11 @@ RNG = np.random.default_rng(SEED)
 install(show_locals=False)
 console = Console()
 
-
 class NeuralDevelopmentalEncoding(nn.Module):
-    def __init__(self, number_of_modules: int, genotype_size: int = 64) -> None:
+    def __init__(self,
+                 number_of_modules: int,
+                 genotype_size: int = 64,
+                 seed: int = 0) -> None:
         super().__init__()
         """
         Neural developmental encoder.
@@ -69,6 +71,8 @@ class NeuralDevelopmentalEncoding(nn.Module):
         genotype_size : int, optional
             Size of each genotype chromosome, by default 64.
         """
+
+        torch.manual_seed(seed)
 
         # Hidden Layers
         self.fc1 = nn.Linear(genotype_size, 64)
@@ -134,28 +138,38 @@ class NeuralDevelopmentalEncoding(nn.Module):
             List of phenotype outputs (numpy arrays).
         """
 
+        print("[kgd-debug] ping")
+        print("[kgd-debug]", f"{self.output_layers=}")
+
         outputs: list[npt.NDArray[np.float32]] = []
         for idx, chromosome in enumerate(genotype):
             with torch.no_grad():  # double safety
+                print("[kgd-debug] ping", idx)
                 x = torch.from_numpy(chromosome).to(torch.float32)
 
                 x = self.fc1(x)
                 x = self.relu(x)
+                print("[kgd-debug] >> relu")
 
                 x = self.fc2(x)
                 x = self.tanh(x)
+                print("[kgd-debug] >> tanh")
 
                 x = self.fc3(x)
                 x = self.relu(x)
+                print("[kgd-debug] >> relu")
 
                 x = self.fc4(x)
                 x = self.relu(x)
+                print("[kgd-debug] >> relu")
 
                 x = self.output_layers[idx](x)
                 x = self.sigmoid(x)
+                print("[kgd-debug] >> sigmoid")
 
                 x = x.view(self.output_shapes[idx])
                 outputs.append(x.detach().numpy())
+        print("[kgd-debug] ping")
         return outputs
 
 

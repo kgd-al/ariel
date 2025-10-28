@@ -68,7 +68,8 @@ class CoreModule(Module):
             type=mujoco.mjtGeom.mjGEOM_BOX,
             mass=CORE_MASS,
             size=CORE_DIMENSIONS,
-            pos=[0, CORE_DIMENSIONS[0], 0],
+            # pos=[0, CORE_DIMENSIONS[0], 0],
+            pos=[0, 0, 0],
             rgba=(253 / 255, 202 / 255, 64 / 255, 1),
         )
 
@@ -77,14 +78,14 @@ class CoreModule(Module):
         shift = -1  # mujoco uses xyzw instead of wxyz
         self.sites[ModuleFaces.FRONT] = core.add_site(
             name=f"{core_name}-front",
-            pos=[0, CORE_DIMENSIONS[1] * 2, -CORE_DIMENSIONS[1] / 2],
+            pos=[CORE_DIMENSIONS[0], 0, -CORE_DIMENSIONS[1] / 2],
             quat=np.round(
                 np.roll(
                     qnp.as_float_array(
                         qnp.from_euler_angles([
-                            np.deg2rad(0),
-                            np.deg2rad(180),
-                            np.deg2rad(180),
+                            np.deg2rad(90),
+                            np.deg2rad(90),
+                            -np.deg2rad(90),
                         ]),
                     ),
                     shift=shift,
@@ -94,14 +95,15 @@ class CoreModule(Module):
         )
         self.sites[ModuleFaces.BACK] = core.add_site(
             name=f"{core_name}-back",
-            pos=[0, 0, -CORE_DIMENSIONS[1] / 2],
+            pos=[-CORE_DIMENSIONS[0], 0, -CORE_DIMENSIONS[1] / 2],
+
             quat=np.round(
                 np.roll(
                     qnp.as_float_array(
                         qnp.from_euler_angles([
-                            np.deg2rad(0),
-                            np.deg2rad(0),
-                            np.deg2rad(0),
+                            np.deg2rad(90),
+                            -np.deg2rad(90),
+                            -np.deg2rad(90),
                         ]),
                     ),
                     shift=shift,
@@ -111,18 +113,14 @@ class CoreModule(Module):
         )
         self.sites[ModuleFaces.LEFT] = core.add_site(
             name=f"{core_name}-left",
-            pos=[
-                -CORE_DIMENSIONS[0],
-                CORE_DIMENSIONS[1],
-                -CORE_DIMENSIONS[1] / 2,
-            ],
+            pos=[0, CORE_DIMENSIONS[1], -CORE_DIMENSIONS[1] / 2],
             quat=np.round(
                 np.roll(
                     qnp.as_float_array(
                         qnp.from_euler_angles([
-                            np.deg2rad(90),
-                            -np.deg2rad(90),
-                            -np.deg2rad(90),
+                            np.deg2rad(0),
+                            np.deg2rad(180),
+                            np.deg2rad(180),
                         ]),
                     ),
                     shift=shift,
@@ -132,30 +130,27 @@ class CoreModule(Module):
         )
         self.sites[ModuleFaces.RIGHT] = core.add_site(
             name=f"{core_name}-right",
-            pos=[
-                CORE_DIMENSIONS[0],
-                CORE_DIMENSIONS[1],
-                -CORE_DIMENSIONS[1] / 2,
-            ],
+            pos=[0, -CORE_DIMENSIONS[1], -CORE_DIMENSIONS[1] / 2],
             quat=np.round(
                 np.roll(
                     qnp.as_float_array(
                         qnp.from_euler_angles([
-                            np.deg2rad(90),
-                            np.deg2rad(90),
-                            -np.deg2rad(90),
+                            np.deg2rad(0),
+                            np.deg2rad(0),
+                            np.deg2rad(0),
                         ]),
                     ),
                     shift=shift,
                 ),
                 decimals=3,
             ),
+
         )
 
         if not printable:
             self.sites[ModuleFaces.TOP] = core.add_site(
                 name=f"{core_name}-top",
-                pos=[0, CORE_DIMENSIONS[1], CORE_DIMENSIONS[2]],
+                pos=[0, 0, CORE_DIMENSIONS[2]],
                 quat=np.round(
                     np.roll(
                         qnp.as_float_array(
@@ -172,7 +167,7 @@ class CoreModule(Module):
             )
             self.sites[ModuleFaces.BOTTOM] = core.add_site(
                 name=f"{core_name}-bottom",
-                pos=[0, CORE_DIMENSIONS[1], -CORE_DIMENSIONS[2]],
+                pos=[0, 0, -CORE_DIMENSIONS[2]],
                 quat=np.round(
                     np.roll(
                         qnp.as_float_array(

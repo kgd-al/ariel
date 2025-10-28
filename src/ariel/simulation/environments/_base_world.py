@@ -133,7 +133,7 @@ class BaseWorld:
         ----------
         spawn_name : str
             Prefix name of the spawned robot to identify its geometries.
-        
+
         Returns
         -------
             float
@@ -239,8 +239,8 @@ class BaseWorld:
         """
         Check and correct the spawn position to avoid collisions with the floor.
 
-        
-        Parameters        
+
+        Parameters
         ----------
         spawn_site : mj.MjsBody
             The site where the robot is spawned.
@@ -274,11 +274,14 @@ class BaseWorld:
         log.debug(msg)
 
         # Validate the spawn position by checking for collisions
-        if validate_no_collisions is True:
+        if validate_no_collisions:
             contact_pairs = self._find_contacts()
             for contact in contact_pairs:
                 # Unpack contact details
                 geom1_name, geom2_name, dist = contact
+
+                if dist <= 0.0:  # Valid collision
+                    continue
 
                 # If there is a collision with the floor, log a warning
                 floor_name = self.mujoco_config.floor_name
@@ -309,7 +312,7 @@ class BaseWorld:
     ) -> mj.MjSpec:
         """
         Spawn a robot into the world at a specified position and orientation.
-        
+
         Parameters
         ----------
         robot_spec : mj.MjSpec
@@ -326,7 +329,7 @@ class BaseWorld:
             Whether to validate the spawn position for collisions after adjustment, by default False
         rotation_sequence : str, optional
             The sequence of axes for Euler to quaternion conversion, by default "XYZ"
-        
+
         Returns
         -------
             mj.MjSpec
@@ -371,7 +374,7 @@ class BaseWorld:
         )
 
         # Correct the spawn position if requested
-        if correct_collision_with_floor is True:
+        if correct_collision_with_floor:
             self._check_and_correct_spawn(
                 spawn_site,
                 spawn_body,
