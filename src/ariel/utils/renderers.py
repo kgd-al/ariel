@@ -53,18 +53,18 @@ def single_frame_renderer(
     )
 
     # If camera not found, use default camera
-    if camera == -1:
+    if camera == -1 or camera is None:
         msg = f"Camera '{camera}' not found. Using default camera."
         log.debug(msg)
-        camera = None
+        camera = 0
     else:
         model.cam_fovy[camera] = cam_fovy or model.cam_fovy[camera]
         model.cam_pos[camera] = cam_pos or model.cam_pos[camera]
         model.cam_quat[camera] = cam_quat or model.cam_quat[camera]
         model.cam_sensorsize[camera] = [width, height]
-        print(f"{model.cam_pos0=}")
-        print(f"{model.cam_pos=}")
-        print(model.camera(camera))
+    print(f"{model.cam_pos0=}")
+    print(f"{model.cam_pos=}")
+    print(model.camera(camera))
 
     # Call rendering engine
     with mujoco.Renderer(

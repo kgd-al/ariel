@@ -56,7 +56,8 @@ class BrickModule(Module):
         # ========= Attachment Points =========
         self.sites = {}
         shift = -1  # mujoco uses xyzw instead of wxyz
-        self.sites[ModuleFaces.FRONT] = brick.add_site(
+        self.sites[ModuleFaces.FRONT] = self.add_site(
+            brick,
             name=f"{brick_name}-front",
             pos=[0, ariel_modules_config.BRICK_DIMENSIONS[1] * 2, 0],
             quat=np.round(
@@ -73,7 +74,8 @@ class BrickModule(Module):
                 decimals=3,
             ),
         )
-        self.sites[ModuleFaces.LEFT] = brick.add_site(
+        self.sites[ModuleFaces.LEFT] = self.add_site(
+            brick,
             name=f"{brick_name}-left",
             pos=[
                 -ariel_modules_config.BRICK_DIMENSIONS[0],
@@ -94,7 +96,8 @@ class BrickModule(Module):
                 decimals=3,
             ),
         )
-        self.sites[ModuleFaces.RIGHT] = brick.add_site(
+        self.sites[ModuleFaces.RIGHT] = self.add_site(
+            brick,
             name=f"{brick_name}-right",
             pos=[
                 ariel_modules_config.BRICK_DIMENSIONS[0],
@@ -117,7 +120,8 @@ class BrickModule(Module):
         )
 
         if not printable:
-            self.sites[ModuleFaces.TOP] = brick.add_site(
+            self.sites[ModuleFaces.TOP] = self.add_site(
+                brick,
                 name=f"{brick_name}-top",
                 pos=[
                     0,
@@ -138,7 +142,8 @@ class BrickModule(Module):
                     decimals=3,
                 ),
             )
-            self.sites[ModuleFaces.BOTTOM] = brick.add_site(
+            self.sites[ModuleFaces.BOTTOM] = self.add_site(
+                brick,
                 name=f"{brick_name}-bottom",
                 pos=[
                     0,

@@ -89,7 +89,8 @@ class HingeModule(Module):
 
         # ======== Attachment Points =========
         self.sites = {}
-        self.sites[ModuleFaces.FRONT] = rotor.add_site(
+        self.sites[ModuleFaces.FRONT] = self.add_site(
+            rotor,
             name=f"{hinge_name}-front",
             pos=[0, ROTOR_DIMENSIONS[1], 0],
         )
