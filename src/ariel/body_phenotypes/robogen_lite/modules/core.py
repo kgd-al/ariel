@@ -99,7 +99,8 @@ class CoreModule(Module):
                 decimals=3,
             ),
         )
-        self.sites[ModuleFaces.BACK] = core.add_site(
+        self.sites[ModuleFaces.BACK] = self.add_site(
+            core,
             name=f"{core_name}-back",
             pos=[-CORE_DIMENSIONS[0], 0, -CORE_DIMENSIONS[1] / 2],
 
@@ -117,7 +118,8 @@ class CoreModule(Module):
                 decimals=3,
             ),
         )
-        self.sites[ModuleFaces.LEFT] = core.add_site(
+        self.sites[ModuleFaces.LEFT] = self.add_site(
+            core,
             name=f"{core_name}-left",
             pos=[0, CORE_DIMENSIONS[1], -CORE_DIMENSIONS[1] / 2],
             quat=np.round(
@@ -134,7 +136,8 @@ class CoreModule(Module):
                 decimals=3,
             ),
         )
-        self.sites[ModuleFaces.RIGHT] = core.add_site(
+        self.sites[ModuleFaces.RIGHT] = self.add_site(
+            core,
             name=f"{core_name}-right",
             pos=[0, -CORE_DIMENSIONS[1], -CORE_DIMENSIONS[1] / 2],
             quat=np.round(
@@ -154,7 +157,8 @@ class CoreModule(Module):
         )
 
         if not printable:
-            self.sites[ModuleFaces.TOP] = core.add_site(
+            self.sites[ModuleFaces.TOP] = self.add_site(
+                core,
                 name=f"{core_name}-top",
                 pos=[0, 0, CORE_DIMENSIONS[2]],
                 quat=np.round(
@@ -171,7 +175,8 @@ class CoreModule(Module):
                     decimals=3,
                 ),
             )
-            self.sites[ModuleFaces.BOTTOM] = core.add_site(
+            self.sites[ModuleFaces.BOTTOM] = self.add_site(
+                core,
                 name=f"{core_name}-bottom",
                 pos=[0, 0, -CORE_DIMENSIONS[2]],
                 quat=np.round(

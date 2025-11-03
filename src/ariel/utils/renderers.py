@@ -54,10 +54,10 @@ def single_frame_renderer(
     )
 
     # If camera not found, use default camera
-    if camera == -1:
+    if camera == -1 or camera is None:
         msg = f"Camera '{camera}' not found. Using default camera."
         log.debug(msg)
-        camera = None
+        camera = 0
     else:
         model.cam_fovy[camera] = cam_fovy or model.cam_fovy[camera]
         model.cam_pos[camera] = cam_pos or model.cam_pos[camera]

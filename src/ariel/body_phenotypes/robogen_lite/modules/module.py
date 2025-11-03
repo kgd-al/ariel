@@ -9,6 +9,8 @@ Todo:
 import typing
 from abc import ABC, abstractmethod
 
+from mujoco import MjsBody
+
 
 class Module(ABC):
     """Base class for all modules."""
@@ -29,6 +31,10 @@ class Module(ABC):
             if not hasattr(cls, attr):
                 msg = f"Class '{cls.__name__}' must define attribute '{attr}'"
                 raise NotImplementedError(msg)
+
+    @staticmethod
+    def add_site(body: MjsBody, *args, **kwargs):
+        return body.add_site(*args, **kwargs, group=5)
 
     @abstractmethod
     def rotate(self, angle: float) -> None:
