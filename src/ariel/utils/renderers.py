@@ -35,9 +35,11 @@ def single_frame_renderer(
     show: bool = False,
     save: bool = False,
     save_path: str | Path | None = None,
+    reset: bool = False,
 ) -> Image.Image:
     # Reset state and time of simulation
-    mujoco.mj_resetData(model, data)
+    if reset:
+        mujoco.mj_resetData(model, data)
 
     # MuJoCo visualisation configuration
     viz_options = mujoco.MjvOption()
