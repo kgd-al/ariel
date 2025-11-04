@@ -34,9 +34,11 @@ def single_frame_renderer(
     show: bool = False,
     save: bool = False,
     save_path: str | Path | None = None,
+    reset: bool = False,
 ) -> Image.Image:
     # Reset state and time of simulation
-    mujoco.mj_resetData(model, data)
+    if reset:
+        mujoco.mj_resetData(model, data)
 
     # Enable joint visualization option:
     viz_options = mujoco.MjvOption()
@@ -62,9 +64,6 @@ def single_frame_renderer(
         model.cam_pos[camera] = cam_pos or model.cam_pos[camera]
         model.cam_quat[camera] = cam_quat or model.cam_quat[camera]
         model.cam_sensorsize[camera] = [width, height]
-    print(f"{model.cam_pos0=}")
-    print(f"{model.cam_pos=}")
-    print(model.camera(camera))
 
     # Call rendering engine
     with mujoco.Renderer(
