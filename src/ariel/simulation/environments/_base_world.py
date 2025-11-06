@@ -19,6 +19,7 @@ from typing import cast
 # Third-party libraries
 import mujoco as mj
 import numpy as np
+from mujoco import MjSpec
 
 # Local libraries
 from ariel import log
@@ -123,11 +124,12 @@ class BaseWorld:
         )
         return spec
 
-    def _find_lowest_position(
-        self,
+    @staticmethod
+    def get_aabb(
+        spec: MjSpec,
         spawn_name: str,
-    ) -> float:
-        """Find the lowest Z position of the spawned robot.
+    ) -> np.ndarray:
+        """Find the Axis Aligned Bounding Box of the spawned robot.
 
         Parameters
         ----------
@@ -136,17 +138,20 @@ class BaseWorld:
 
         Returns
         -------
-            float
-                The lowest Z position of the robot in the world."""
+            np.ndarray
+                The minimum and maximum positions """
         # Generate model and data from a temporary copy of the spec
-        model: mj.MjModel = cast("mj.MjModel", self.spec.compile())
+        model: mj.MjModel = cast("mj.MjModel", spec.compile())
         data = mj.MjData(model)
 
         # Step the simulation to ensure everything is stable
         mj.mj_forward(model, data)
 
+        aabb = np.zeros((2, 3))
+        aabb[0, :] = np.inf
+        aabb[1, :] = - np.inf
+
         # Iterate over all geoms
-        lowest_point = np.inf
         for i in range(model.ngeom):
             # Get the geometry
             geom = data.geom(i)
@@ -187,16 +192,15 @@ class BaseWorld:
             corners_world = pos + corners_local @ r_mat.T  # (8,3)
 
             # Return the lowest Z value
-            maybe_lowest_point = np.min(corners_world[:, 2])
-            lowest_point = min(lowest_point, maybe_lowest_point)
+            aabb[0, :] = np.minimum(aabb[0, :], corners_world.min(axis=0))
+            aabb[1, :] = np.maximum(aabb[1, :], corners_world.max(axis=0))
 
         # Clear the temporary objects
         del model, data
 
         # Return the lowest position rounded to avoid floating point issues
-        if lowest_point == np.inf:
-            return 0.0
-        return np.round(lowest_point, 6)
+        assert np.isfinite(aabb).all(), f"Non-finite values in AABB: {aabb}"
+        return np.round(aabb, 6)
 
     def _find_contacts(self) -> set[tuple[str, str, float]]:
         # Generate model and data
@@ -262,8 +266,8 @@ class BaseWorld:
         msg = f"Initial spawn position: {spawn_site.pos}"
         log.debug(msg)
 
-        # Find lowest position of the robot
-        lowest_position = self._find_lowest_position(spawn_name)
+        # Find the lowest position of the robot
+        lowest_position = self.get_aabb(self.spec, spawn_name)[0, 2]
         msg = f"Lowest robot position: {lowest_position} m"
         log.debug(msg)
 
