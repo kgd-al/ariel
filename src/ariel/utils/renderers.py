@@ -34,7 +34,9 @@ def single_frame_renderer(
     show: bool = False,
     save: bool = False,
     save_path: str | Path | None = None,
+
     reset: bool = False,
+    transparent: bool = False
 ) -> Image.Image:
     # Reset state and time of simulation
     if reset:
@@ -65,6 +67,9 @@ def single_frame_renderer(
         model.cam_quat[camera] = cam_quat or model.cam_quat[camera]
         model.cam_sensorsize[camera] = [width, height]
 
+    if transparent:
+        model.geom("floor").rgba = (0, 0, 0, 0)
+
     # Call rendering engine
     with mujoco.Renderer(
         model,
@@ -86,6 +91,9 @@ def single_frame_renderer(
 
         # Convert frame into an image which can be shown
         img: Image.Image = Image.fromarray(frame)
+
+    # if transparent:
+    #     img = img.
 
     # Save image locally
     if save:
