@@ -12,6 +12,7 @@ from pathlib import Path
 
 # Third-party libraries
 import mujoco
+import numpy as np
 from PIL import Image
 
 # Local libraries
@@ -89,11 +90,14 @@ def single_frame_renderer(
         # Generate frame using rendering engine
         frame = renderer.render()
 
+        if transparent:
+            frame = np.dstack((
+                frame,
+                np.uint8((np.sum(frame, axis=-1) > 0) * 255)
+            ))
+
         # Convert frame into an image which can be shown
         img: Image.Image = Image.fromarray(frame)
-
-    # if transparent:
-    #     img = img.
 
     # Save image locally
     if save:
