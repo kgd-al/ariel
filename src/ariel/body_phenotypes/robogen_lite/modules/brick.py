@@ -22,19 +22,10 @@ ariel_modules_config = ArielModulesConfig()
 class BrickModule(Module):
     """Brick module specifications."""
 
-    index: int | None = None
     module_type: ModuleType = ModuleType.BRICK
 
-    def __init__(self, index: int) -> None:
-        """Initialize the brick module.
-
-        Parameters
-        ----------
-        index
-            The index of the brick module being instantiated
-        """
-        # Set the index of the module
-        self.index = index
+    def __init__(self) -> None:
+        super().__init__()
 
         # Create the parent spec.
         spec = mujoco.MjSpec()
@@ -169,26 +160,3 @@ class BrickModule(Module):
         self.spec = spec
         self.body = brick
         self.rotate(angle=0)  # Initialize with no rotation
-
-    def rotate(
-        self,
-        angle: float,
-    ) -> None:
-        """
-        Rotate the brick module by a specified angle.
-
-        Parameters
-        ----------
-        angle : float
-            The angle in degrees to rotate the brick.
-        """
-        # Convert angle to quaternion
-        quat = qnp.from_euler_angles([
-            np.deg2rad(180),
-            -np.deg2rad(180 - angle),
-            np.deg2rad(0),
-        ])
-        quat = np.roll(qnp.as_float_array(quat), shift=-1)
-
-        # Set the quaternion for the brick body
-        self.body.quat = np.round(quat, decimals=3)

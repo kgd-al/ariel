@@ -9,47 +9,49 @@ Todo:
 import typing
 from abc import ABC, abstractmethod
 
-from mujoco import MjsBody
+import quaternion as qnp
+import numpy as np
+from mujoco import MjsBody, MjsSite
+
+from ariel.body_phenotypes.robogen_lite.config import ModuleFaces
 
 
 class Module(ABC):
     """Base class for all modules."""
 
-    required_attributes: typing.ClassVar[list[str]] = ["index", "module_type"]
-
-    def __init_subclass__(cls) -> None:
-        """
-        Ensure that subclasses define required attributes.
-
-        Raises
-        ------
-        NotImplementedError
-            If a required attribute is not defined in the subclass.
-        """
-        super().__init_subclass__()
-        for attr in cls.required_attributes:
-            if not hasattr(cls, attr):
-                msg = f"Class '{cls.__name__}' must define attribute '{attr}'"
-                raise NotImplementedError(msg)
+    def __init__(self):
+        self.body: typing.Optional[MjsBody] = None
+        self.sites: typing.Mapping[ModuleFaces, MjsSite] = dict()
 
     @staticmethod
     def add_site(body: MjsBody, *args, **kwargs):
         return body.add_site(*args, **kwargs, group=5)
 
-    @abstractmethod
-    def rotate(self, angle: float) -> None:
+    @property
+    def children(self):
+        for site in self.sites.values():
+            print(site)
+        return {}
+
+    def rotate(
+        self,
+        angle: float,
+    ) -> None:
         """
-        Rotate the module by a certain angle.
+        Rotate the brick module by a specified angle.
 
         Parameters
         ----------
         angle : float
-            The angle to rotate the module by, in degrees.
-
-        Raises
-        ------
-        NotImplementedError
-            If the method is not implemented in the subclass.
+            The angle in degrees to rotate the brick.
         """
-        msg = f"{self.__class__.__name__} does not implement 'rotate' method."
-        raise NotImplementedError(msg)
+        # Convert angle to quaternion
+        quat = qnp.from_euler_angles([
+            np.deg2rad(180),
+            -np.deg2rad(180 - angle),
+            np.deg2rad(0),
+        ])
+        quat = np.roll(qnp.as_float_array(quat), shift=-1)
+
+        # Set the quaternion for the brick body
+        self.body.quat = np.round(quat, decimals=3)

@@ -225,26 +225,31 @@ class BaseWorld:
             # World rotation matrix (flat 9 values in row-major)
             r_mat = np.array(data.geom_xmat[geom.id]).reshape(3, 3)
 
-            # Local half-sizes (sx, sy, sz)
-            sx, sy, sz = model.geom_size[geom.id]  # box half extents
-
-            # Generate 8 local corner offsets
-            corners_local = np.array([
-                [dx * sx, dy * sy, dz * sz]
-                for dx in (-1, 1)
-                for dy in (-1, 1)
-                for dz in (-1, 1)
+            # AABB
+            print()
+            local_size = model.geom_aabb[geom.id][3:]
+            print(f"[kgd-debug]  {name_of_geom}, {name_of_body}, {name_of_parent}")
+            print(f"[kgd-debug]  {local_size=}, {r_mat=}")
+            rotated_size = local_size @ r_mat
+            print(f"[kgd-debug]  {rotated_size=}")
+            print(f"[kgd-debug]  {pos=}")
+            # print(f"[kgd-debug]  aabb:", [pos - .5 * rotated_size, pos + .5 * rotated_size])
+            corners = np.array([
+                pos + .5 * np.array([dx, dy, dz]) * rotated_size
+                for dx in [-1, 1] for dy in [-1, 1] for dz in [-1, 1]
             ])
-
-            # Transform corners: world_corner = pos + R @ local_corner
-            corners_world = pos + corners_local @ r_mat.T  # (8,3)
+            print(f"[kgd-debug]  corners.min: {corners.min(axis=0)}")
+            print(f"[kgd-debug]  corners.max: {corners.max(axis=0)}")
 
             # Return the lowest Z value
-            aabb[0, :] = np.minimum(aabb[0, :], corners_world.min(axis=0))
-            aabb[1, :] = np.maximum(aabb[1, :], corners_world.max(axis=0))
+            aabb[0, :] = np.minimum(aabb[0, :], corners.min(axis=0))
+            aabb[1, :] = np.maximum(aabb[1, :], corners.max(axis=0))
+            print(f"[kgd-debug] {aabb=}")
 
         # Clear the temporary objects
         del model, data
+
+        print(f"[kgd-debug] final {aabb=}")
 
         # Return the lowest position rounded to avoid floating point issues
         assert np.isfinite(aabb).all(), f"Non-finite values in AABB: {aabb}"
