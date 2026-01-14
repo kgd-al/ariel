@@ -35,19 +35,10 @@ ROTOR_DIMENSIONS: DimensionType = (0.025, 0.02, 0.025)
 class HingeModule(Module):
     """Hinge module specifications."""
 
-    index: int | None = None
     module_type: ModuleType = ModuleType.HINGE
 
-    def __init__(self, index: int) -> None:
-        """Initialize the hinge module.
-
-        Parameters
-        ----------
-        index
-            The index of the hinge module being instantiated
-        """
-        # Set the index of the module
-        self.index = index
+    def __init__(self) -> None:
+        super().__init__()
 
         # Create the parent spec.
         spec = mujoco.MjSpec()
@@ -149,26 +140,3 @@ class HingeModule(Module):
         self.spec = spec
         self.body = hinge
         self.rotate(angle=0)  # Initialize with no rotation
-
-    def rotate(
-        self,
-        angle: float,
-    ) -> None:
-        """
-        Rotate the hinge module by a specified angle.
-
-        Parameters
-        ----------
-        angle
-            The angle in degrees to rotate the hinge.
-        """
-        # Convert angle to quaternion
-        quat = qnp.from_euler_angles([
-            np.deg2rad(180),
-            -np.deg2rad(180 - angle),
-            np.deg2rad(0),
-        ])
-        quat = np.roll(qnp.as_float_array(quat), shift=-1)
-
-        # Set the quaternion for the hinge body
-        self.body.quat = np.round(quat, decimals=3)

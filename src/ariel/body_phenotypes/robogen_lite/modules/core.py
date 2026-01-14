@@ -30,30 +30,10 @@ CORE_DIMENSIONS: DimensionType = (0.10, 0.10, 0.10)
 class CoreModule(Module):
     """Core module specifications."""
 
-    index: int | None = None
     module_type: ModuleType = ModuleType.CORE
 
-    def __init__(self, index: int) -> None:
-        """
-        Initialize the core module.
-
-        Parameters
-        ----------
-        index : int
-            The index of the core module.
-
-        Raises
-        ------
-        ValueError
-            If the index is not the core module index.
-        """
-        # Check that the index is the core module index
-        if index != IDX_OF_CORE:
-            msg = f"Core module index must be {IDX_OF_CORE}, but got {index}."
-            raise ValueError(msg)
-
-        # Set the index
-        self.index = IDX_OF_CORE
+    def __init__(self) -> None:
+        super().__init__()
 
         # Create the parent spec.
         spec = mujoco.MjSpec()
