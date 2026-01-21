@@ -179,7 +179,7 @@ class BaseWorld:
 
             # AABB
             local_size = model.geom_aabb[geom.id][3:]
-            rotated_size = local_size @ r_mat
+            rotated_size = r_mat @ local_size
             corners = np.array([
                 pos + np.array([dx, dy, dz]) * rotated_size
                 for dx in [-1, 1] for dy in [-1, 1] for dz in [-1, 1]
