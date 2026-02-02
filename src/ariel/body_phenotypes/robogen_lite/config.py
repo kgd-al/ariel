@@ -19,8 +19,8 @@ from pydantic import BaseModel
 
 printable = bool(os.environ.get("PRINTABLE", True))
 
-if printable:
-    print(f"[kgd-debug:{__name__}] Making changes")
+if not printable:
+    print(f"[kgd-debug:{__name__}] Adding physically implausible module options")
 
 
 class ModuleType(Enum):
