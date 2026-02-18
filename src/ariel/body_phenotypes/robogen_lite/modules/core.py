@@ -1,4 +1,5 @@
 """TODO(jmdm): description of script."""
+from functools import lru_cache
 
 # Third-party libraries
 import mujoco
@@ -189,3 +190,8 @@ class CoreModule(Module):
             msg = f"Attempted to rotate the core module by: {angle}."
             msg += f"Core ({self.index}) module does not support rotation."
             raise AttributeError(msg)
+
+    @property
+    @lru_cache
+    def hinges(self):
+        return self.spec.actuators
