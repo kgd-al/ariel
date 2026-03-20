@@ -89,7 +89,8 @@ class HingeModule(Module):
         # ========= Servo =========
         # Robot actuators
         kp = 5.0   # 1  # Ariel says `1`, revolve said 5
-        kv = 0.05  # 1  # Same
+        kv = 0.5  # 0.05  # 1  # Same
+        a = .005  # 0.002  # Armature, new value for ariel
         servo_axis = (0, 0, 1)
 
         servo_name = "servo"
@@ -98,7 +99,7 @@ class HingeModule(Module):
             type=mujoco.mjtJoint.mjJNT_HINGE,
             axis=servo_axis,
             pos=[0, -ROTOR_DIMENSIONS[1], 0],
-            armature=0.002
+            armature=a
         )
 
         # Actuator parameters are defined over a range of 10...
