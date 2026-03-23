@@ -32,6 +32,11 @@ ROTOR_DIMENSIONS: DimensionType = (0.025, 0.02, 0.025)
 # ------------------------------ #
 
 
+HINGE_KP = 4.0   # 1  # Ariel says `1`, revolve said 5
+HINGE_KV = 0.5  # 0.05  # 1  # Same
+HINGE_ARMATURE = .01  # 0.002  # Armature, new value for ariel
+
+
 class HingeModule(Module):
     """Hinge module specifications."""
 
@@ -88,9 +93,9 @@ class HingeModule(Module):
 
         # ========= Servo =========
         # Robot actuators
-        kp = 5.0   # 1  # Ariel says `1`, revolve said 5
-        kv = 0.5  # 0.05  # 1  # Same
-        a = .005  # 0.002  # Armature, new value for ariel
+        kp = HINGE_KP
+        kv = HINGE_KV
+        a = HINGE_ARMATURE
         servo_axis = (0, 0, 1)
 
         servo_name = "servo"
