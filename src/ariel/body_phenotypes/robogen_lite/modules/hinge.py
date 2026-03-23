@@ -34,7 +34,7 @@ ROTOR_DIMENSIONS: DimensionType = (0.025, 0.02, 0.025)
 
 HINGE_KP = 4.0   # 1  # Ariel says `1`, revolve said 5
 HINGE_KV = 0.5  # 0.05  # 1  # Same
-HINGE_ARMATURE = .01  # 0.002  # Armature, new value for ariel
+HINGE_ARMATURE = 0.1  # 0.002  # Armature, new value for ariel
 
 
 class HingeModule(Module):
