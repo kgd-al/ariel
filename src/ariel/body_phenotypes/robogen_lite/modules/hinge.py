@@ -35,6 +35,7 @@ ROTOR_DIMENSIONS: DimensionType = (0.025, 0.02, 0.025)
 HINGE_KP = 4.0   # 1  # Ariel says `1`, revolve said 5
 HINGE_KV = 0.5  # 0.05  # 1  # Same
 HINGE_ARMATURE = 0.1  # 0.002  # Armature, new value for ariel
+CTRL_RANGE = (-np.pi / 2, np.pi / 2)  # [-90, 90] degrees (range of 180)
 
 
 class HingeModule(Module):
@@ -104,7 +105,8 @@ class HingeModule(Module):
             type=mujoco.mjtJoint.mjJNT_HINGE,
             axis=servo_axis,
             pos=[0, -ROTOR_DIMENSIONS[1], 0],
-            armature=a
+            armature=a,
+            range=CTRL_RANGE,
         )
 
         # Actuator parameters are defined over a range of 10...
@@ -137,10 +139,7 @@ class HingeModule(Module):
             biasprm=biasprm,
             trntype=trntype,
             target=servo_name,
-            ctrlrange=(
-                -np.pi / 2,
-                np.pi / 2,
-            ),  # [-90, 90] degrees (range of 180)
+            ctrlrange=CTRL_RANGE,
         )
 
         # Save model specifications
