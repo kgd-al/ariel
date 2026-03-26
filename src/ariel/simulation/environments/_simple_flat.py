@@ -31,6 +31,12 @@ class SimpleFlatWorld(BaseWorld):
         if self.is_precompiled:
             return
 
+        print("+++++++")
+        print("+++++++")
+        print(f"{self.floor_size=}")
+        print("+++++++")
+        print("+++++++")
+
         # Floor geom parameters
         self._floor_name = self.mujoco_config.floor_name
         width, height, depth = self.floor_size

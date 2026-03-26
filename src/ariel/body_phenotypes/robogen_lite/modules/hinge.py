@@ -106,7 +106,7 @@ class HingeModule(Module):
             axis=servo_axis,
             pos=[0, -ROTOR_DIMENSIONS[1], 0],
             armature=a,
-            range=CTRL_RANGE,
+            range=(np.degrees(d) for d in CTRL_RANGE),
         )
 
         # Actuator parameters are defined over a range of 10...
