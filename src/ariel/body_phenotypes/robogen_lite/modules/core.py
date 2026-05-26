@@ -54,6 +54,12 @@ class CoreModule(Module):
             rgba=(253 / 255, 202 / 255, 64 / 255, 1),
         )
 
+        core.add_camera(
+            name=f"{core_name}_mycamera",
+            pos=[0, 0, CORE_DIMENSIONS[0]-0.02],
+            euler=[-90, 0, 180],
+        )
+
         # ========= Attachment Points =========
         self.sites = {}
         shift = -1  # mujoco uses xyzw instead of wxyz

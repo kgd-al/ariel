@@ -11,6 +11,7 @@ import math
 from pathlib import Path
 
 # Third-party libraries
+import numpy as np
 import mujoco
 import numpy as np
 from PIL import Image
@@ -43,12 +44,12 @@ def single_frame_renderer(
     if reset:
         mujoco.mj_resetData(model, data)
 
-    # Enable joint visualization option:
+    # MuJoCo visualisation configuration
     viz_options = mujoco.MjvOption()
-    viz_options.flags[mujoco.mjtVisFlag.mjVIS_JOINT] = False
-    viz_options.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = False
-    viz_options.flags[mujoco.mjtVisFlag.mjVIS_ACTUATOR] = False
-    viz_options.flags[mujoco.mjtVisFlag.mjVIS_BODYBVH] = False
+    # viz_options.flags[mujoco.mjtVisFlag.mjVIS_JOINT] = True
+    # viz_options.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = True
+    # viz_options.flags[mujoco.mjtVisFlag.mjVIS_ACTUATOR] = True
+    # viz_options.flags[mujoco.mjtVisFlag.mjVIS_BODYBVH] = True
 
     # Update rendering engine
     camera = mujoco.mj_name2id(
@@ -140,12 +141,12 @@ def video_renderer(
     if video_recorder is None:
         video_recorder = VideoRecorder()
 
-    # Enable joint visualization option:
+    # MuJoCo visualisation configuration
     viz_options = mujoco.MjvOption()
-    viz_options.flags[mujoco.mjtVisFlag.mjVIS_JOINT] = False
-    viz_options.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = False
-    viz_options.flags[mujoco.mjtVisFlag.mjVIS_ACTUATOR] = False
-    viz_options.flags[mujoco.mjtVisFlag.mjVIS_BODYBVH] = False
+    # viz_options.flags[mujoco.mjtVisFlag.mjVIS_JOINT] = True
+    # viz_options.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = True
+    # viz_options.flags[mujoco.mjtVisFlag.mjVIS_ACTUATOR] = True
+    # viz_options.flags[mujoco.mjtVisFlag.mjVIS_BODYBVH] = True
 
     # Reset state and time of simulation
     mujoco.mj_resetData(model, data)
@@ -206,7 +207,7 @@ def video_renderer(
     # Exit (and save locally) the generated video
     msg = "Finish video rendering"
     num_frames = video_recorder.frame_count
-    log.info(f"--> {msg}: {num_frames=}")
+    log.debug(f"--> {msg}: {num_frames=}")
     video_recorder.release()
 
 
@@ -246,9 +247,12 @@ def tracking_video_renderer(
     if video_recorder is None:
         video_recorder = VideoRecorder()
 
-    # Enable joint visualization option:
-    scene_option = mujoco.MjvOption()
-    scene_option.flags[mujoco.mjtVisFlag.mjVIS_JOINT] = True
+    # MuJoCo visualisation configuration
+    viz_options = mujoco.MjvOption()
+    viz_options.flags[mujoco.mjtVisFlag.mjVIS_JOINT] = True
+    viz_options.flags[mujoco.mjtVisFlag.mjVIS_TRANSPARENT] = True
+    viz_options.flags[mujoco.mjtVisFlag.mjVIS_ACTUATOR] = True
+    viz_options.flags[mujoco.mjtVisFlag.mjVIS_BODYBVH] = True
 
     # Reset state and time of simulation
     mujoco.mj_resetData(model, data)
