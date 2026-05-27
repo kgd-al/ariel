@@ -54,7 +54,10 @@ console = Console()
 
 
 class NeuralDevelopmentalEncoding(nn.Module):
-    def __init__(self, number_of_modules: int, genotype_size: int = 64) -> None:
+    def __init__(self,
+                 number_of_modules: int,
+                 genotype_size: int = 64,
+                 seed: int = 0) -> None:
         super().__init__()
         """
         Neural developmental encoder.
@@ -69,6 +72,8 @@ class NeuralDevelopmentalEncoding(nn.Module):
         genotype_size : int, optional
             Size of each genotype chromosome, by default 64.
         """
+
+        torch.manual_seed(seed)
 
         # Hidden Layers
         self.fc1 = nn.Linear(genotype_size, 64)
