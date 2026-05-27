@@ -18,6 +18,8 @@ from ariel.body_phenotypes.robogen_lite.modules.brick import BrickModule
 from ariel.body_phenotypes.robogen_lite.modules.core import CoreModule
 from ariel.body_phenotypes.robogen_lite.modules.hinge import HingeModule
 
+import networkx as nx
+
 # Type checking
 if TYPE_CHECKING:
     from networkx import DiGraph
@@ -47,6 +49,8 @@ def construct_mjspec_from_graph(graph: DiGraph[Any]) -> CoreModule:
     ValueError
         If the graph contains unknown module types.
     """
+    assert nx.is_tree(graph)
+
     modules: dict[int, Module] = {}
     for node in graph.nodes:
         # Extract module type and rotation from the graph node
@@ -56,11 +60,11 @@ def construct_mjspec_from_graph(graph: DiGraph[Any]) -> CoreModule:
         # Create the module based on its type
         match module_type:
             case ModuleType.CORE.name:
-                module = CoreModule(index=IDX_OF_CORE)
+                module = CoreModule()
             case ModuleType.HINGE.name:
-                module = HingeModule(index=node)
+                module = HingeModule()
             case ModuleType.BRICK.name:
-                module = BrickModule(index=node)
+                module = BrickModule()
             case ModuleType.NONE.name:
                 module = None
             case _:
@@ -75,22 +79,25 @@ def construct_mjspec_from_graph(graph: DiGraph[Any]) -> CoreModule:
         else:
             modules[node] = None
 
-    # Attach bodies to modules based on the graph edges
-    for edge in graph.edges:
-        # Extract the from and to modules and the face from the edge
-        from_module = edge[0]
-        to_module = edge[1]
-        face = graph.edges[edge]["face"]
+    core_module = modules[IDX_OF_CORE]
+    names = {IDX_OF_CORE: "C"}
 
-        # Check if both modules exist (not 'None')
-        if modules[to_module]:
-            modules[from_module].sites[ModuleFaces[face]].attach_body(
-                body=modules[to_module].body,
-                prefix=f"{modules[from_module].index}-{modules[to_module].index}-{ModuleFaces[face].value}-",
+    for parent, children in nx.dfs_successors(graph).items():
+        parent_module = modules[parent]
+        for child in children:
+            child_module = modules[child]
+            face = ModuleFaces[graph[parent][child]["face"]]
+            assert parent_module is not None and child_module is not None
+            names[child] = name = f"{names[parent]}-{face.name[0].lower()}{child_module.__class__.__name__[0]}"
+            parent_module.sites[face].attach_body(
+                body=child_module.body,
+                prefix=f"{name}-",
             )
 
-    core_module = modules[IDX_OF_CORE]
     if isinstance(core_module, CoreModule):
+        for site in core_module.spec.sites:
+            core_module.spec.delete(site)
+
         return core_module
 
     msg = "The core module is not of type CoreModule."
