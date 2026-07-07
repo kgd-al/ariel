@@ -125,6 +125,8 @@ def load_graph_from_json(
 def draw_graph(
     graph: DiGraph[Any],
     title: str = "NetworkX Directed Graph",
+    show_face: bool = True,
+    show_angle: bool = True,
     save_file: Path | str | None = None,
     *,
     seed: int = 42,
@@ -139,6 +141,10 @@ def draw_graph(
         The directed graph to draw.
     title : str
         The title of the graph.
+    show_face:
+        Whether to decorate edges with name of the attached face
+    show_angle:
+        Whether to decorate edges with the angle relative to the parent
     save_file : Path | str | None, optional
         The file path to save the graph image, by default None
     """
@@ -159,7 +165,18 @@ def draw_graph(
         width=0.5,
     )
 
-    edge_labels = nx.get_edge_attributes(graph, "face")
+    def format_edge(lhs, rhs, e: dict):
+        if not show_face and not show_angle:
+            return None
+        items = []
+        if show_face:
+            items.append(e["face"])
+        if show_angle and (a := graph.nodes[rhs]["rotation"]) is not None:
+            items.append(a.split("_")[1])
+        return " - ".join(items)
+
+    # edge_labels = nx.get_edge_attributes(graph, "face")
+    edge_labels = {(u, v): format_edge(u, v, e) for u, v, e in graph.edges(data=True)}
 
     nx.draw_networkx_edge_labels(
         graph,
