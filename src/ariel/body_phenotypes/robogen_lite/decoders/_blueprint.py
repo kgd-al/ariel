@@ -157,6 +157,7 @@ def draw_graph(
     nx.draw(
         graph,
         pos,
+        labels={n: graph.nodes[n]["type"][0] for n in graph.nodes},
         with_labels=True,
         node_size=150,
         node_color="#FFFFFF00",
@@ -175,7 +176,6 @@ def draw_graph(
             items.append(a.split("_")[1])
         return " - ".join(items)
 
-    # edge_labels = nx.get_edge_attributes(graph, "face")
     edge_labels = {(u, v): format_edge(u, v, e) for u, v, e in graph.edges(data=True)}
 
     nx.draw_networkx_edge_labels(
@@ -191,6 +191,7 @@ def draw_graph(
     # Save the graph visualization
     if save_file:
         plt.savefig(save_file, dpi=dpi)
+        plt.close()
     else:
         # Show the plot
         plt.show()
