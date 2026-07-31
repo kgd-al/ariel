@@ -8,7 +8,6 @@ Todo:
 # Third-party libraries
 import mujoco
 import numpy as np
-import quaternion as qnp
 
 # Local libraries
 from ariel.body_phenotypes.robogen_lite.config import ModuleFaces, ModuleType
@@ -23,18 +22,22 @@ type DimensionType = tuple[float, float, float]
 
 # --- Robogen Configuration --- #
 # Module weights (kg)
-STATOR_MASS: WeightType = 0.02  # 20 grams
-ROTOR_MASS: WeightType = 0.04  # 40 grams
+STATOR_MASS: WeightType = 0.065  # 20 grams
+ROTOR_MASS: WeightType = 0.040  # 40 grams
 
 # Module dimensions (length, width, height) in meters
-STATOR_DIMENSIONS: DimensionType = (0.025, 0.03, 0.025)
-ROTOR_DIMENSIONS: DimensionType = (0.025, 0.02, 0.025)
+STATOR_DIMENSIONS: DimensionType = (0.026, 0.022, 0.026)
+ROTOR_DIMENSIONS: DimensionType = (0.026, 0.0155, 0.026)
 # ------------------------------ #
 
 
-HINGE_KP = 4.0   # 1  # Ariel says `1`, revolve said 5
-HINGE_KV = 0.5  # 0.05  # 1  # Same
-HINGE_ARMATURE = 0.1  # 0.002  # Armature, new value for ariel
+# HINGE_KP = 4.0   # 1  # Ariel says `1`, revolve said 5
+# HINGE_KV = 0.5  # 0.05  # 1  # Same
+# HINGE_ARMATURE = 0.1  # 0.002  # Armature, new value for ariel
+# After Optuna rough optimisation (single hinge + brick)
+HINGE_KP = 1.3605113362038874
+HINGE_KV = 0.3555497840137177
+HINGE_ARMATURE = 0.08117047736037042
 CTRL_RANGE = (-np.pi / 2, np.pi / 2)  # [-90, 90] degrees (range of 180)
 
 

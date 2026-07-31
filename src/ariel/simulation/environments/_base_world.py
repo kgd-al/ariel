@@ -128,22 +128,10 @@ class BaseWorld:
 
         # --- Assets ---
         # Skybox Texture
-        spec.add_texture(
-            type=mj.mjtTexture.mjTEXTURE_SKYBOX,
-            builtin=mj.mjtBuiltin.mjBUILTIN_GRADIENT,
-            rgb1=[
-                61 / 255,
-                163 / 255,
-                179 / 255,
-            ],
-            rgb2=[
-                82 / 255,
-                57 / 255,
-                153 / 255,
-            ],
-            width=512,
-            height=3072,
-        )
+        spec.add_texture(builtin=mj.mjtBuiltin.mjBUILTIN_FLAT,
+                          rgb1=[0, 0, 0], rgb2=[0, 0, 0],
+                          width=1024, height=1024,
+                          type=mj.mjtTexture.mjTEXTURE_SKYBOX, name="skybox")
 
         # Add a default light source
         spec.worldbody.add_light(
